@@ -26,12 +26,34 @@ export const Appointments: React.FC = () => {
     return [...arr].sort(((a, b) => compareAsc(new Date(a.startDate), new Date(b.startDate))))
   }
 
+  const setUniqClinicians = (arr: Appointment[]) => {
+    const uniqClinicians = Array.from(new Set(arr.map((item) => item.clinicianName)));
+    setClinicians(uniqClinicians);
+  }
+
+  const setUniqDays = (arr: Appointment[]) => {
+    const uniqDays = Array.from(new Set(sortAppointments(arr)
+    .map((item) => format(new Date(item.startDate), 'dd/MM/yyyy'))));
+    setDays(uniqDays);
+  }
+
   const addAppointment = (item: Appointment) => {
-    setAppointments((data) => sortAppointments([...data, item]));
+    setInitData((data) => {
+        const sorted = sortAppointments([...data, item]);
+        setUniqClinicians(sorted);
+        setUniqDays(sorted);
+        return sorted;
+      }
+    )
   }
 
   const removeAppointment = (id: string) => {
-    setAppointments((data) => data.filter(item => item.id !== id));
+    setInitData((data) => {
+      const filtered = data.filter(item => item.id !== id);
+      setUniqClinicians(filtered);
+      setUniqDays(filtered);
+      return filtered;
+    });
   }
 
   const clinicianHandler = (name: string) => {
@@ -44,11 +66,8 @@ export const Appointments: React.FC = () => {
 
   useEffect(() => {
     setInitData(data as Appointment[]);
-    const uniqClinicians = Array.from(new Set(data.map((item) => item.clinicianName)));
-    const uniqDays = Array.from(new Set(sortAppointments(data as Appointment[])
-    .map((item) => format(new Date(item.startDate), 'dd/MM/yyyy'))));
-    setDays(uniqDays);
-    setClinicians(uniqClinicians);
+    setUniqClinicians(data as Appointment[]);
+    setUniqDays(data as Appointment[]);
   }, [])
 
   useEffect(() => {
