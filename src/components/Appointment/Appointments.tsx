@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
 import { Container, Grid } from '@material-ui/core';
-import compareAsc from 'date-fns/compareAsc'
+import compareAsc from 'date-fns/compareAsc';
+import { format } from 'date-fns';
 
-import { Appointment, GroupType } from '../../shared/types/appointment';
+import { Appointment } from '../../shared/types/appointment';
 import data from '../../../data.json';
 import { DropDown } from './DropDown';
 import { AddAppointment } from './AddAppointment/AddAppointment';
@@ -13,41 +14,57 @@ import { useStyles } from './style';
 
 export const Appointments: React.FC = () => {
   const classes = useStyles();
-  const [groupType, setGroupType] = useState(GroupType.day);
+
+  const [selectedClinician, setSelectedClinician] = useState('');
+  const [selectedDay, setSelectedDay] = useState('');
   const [initData, setInitData] = useState<Appointment[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [clinicians, setClinicians] = useState<string[]>([]);
+  const [days, setDays] = useState<string[]>([]);
+
+  const sortAppointments = (arr: Appointment[]) => {
+    return [...arr].sort(((a, b) => compareAsc(new Date(a.startDate), new Date(b.startDate))))
+  }
 
   const addAppointment = (item: Appointment) => {
-    setAppointments((data) => [...data, item]);
+    setAppointments((data) => sortAppointments([...data, item]));
   }
 
   const removeAppointment = (id: string) => {
     setAppointments((data) => data.filter(item => item.id !== id));
   }
 
-  const groupByHandler = (type: GroupType) => {
-    setGroupType(type);
+  const clinicianHandler = (name: string) => {
+    setSelectedClinician(name);
+  }
+
+  const selectedDayHandler = (day: string) => {
+    setSelectedDay(day);
   }
 
   useEffect(() => {
-    setInitData(data as Appointment[])
+    setInitData(data as Appointment[]);
+    const uniqClinicians = Array.from(new Set(data.map((item) => item.clinicianName)));
+    const uniqDays = Array.from(new Set(sortAppointments(data as Appointment[])
+    .map((item) => format(new Date(item.startDate), 'dd/MM/yyyy'))));
+    setDays(uniqDays);
+    setClinicians(uniqClinicians);
   }, [])
 
   useEffect(() => {
-    switch (groupType) {
-      case GroupType.clinician: {
-        const sortedAppointments = [...initData].sort(((a, b) => a.clinicianName.localeCompare(b.clinicianName)));
-        setAppointments(sortedAppointments as Appointment[]);
-      }
-        break;
-      case GroupType.day:
-      default: {
-        const sortedAppointments = [...initData].sort(((a, b) => compareAsc(new Date(a.startDate), new Date(b.startDate))));
-        setAppointments(sortedAppointments as Appointment[]);
-      }
-        break;
+    const sortedData = sortAppointments(initData);
+    if (selectedClinician) {
+      const appointments = sortedData.filter(item => item.clinicianName === selectedClinician);
+      setAppointments(appointments as Appointment[]);
+      return;
     }
-  }, [groupType, initData])
+    if (selectedDay) {
+      const appointments = sortedData.filter(item => format(new Date(item.startDate), 'dd/MM/yyyy') === selectedDay);
+      setAppointments(appointments as Appointment[]);
+      return;
+    }
+    setAppointments(sortedData as Appointment[]);
+  }, [initData, selectedClinician, selectedDay])
 
   return (
     <Container maxWidth="lg" className={classes.container}>
@@ -56,7 +73,14 @@ export const Appointments: React.FC = () => {
           <AddAppointment addHandler={addAppointment}/>
         </Grid>
         <Grid item md={9}>
-          <DropDown groupHandler={groupByHandler} type={groupType}/>
+          <DropDown
+            clinicianHandler={clinicianHandler}
+            selectedDayHandler={selectedDayHandler}
+            clinicians={clinicians}
+            selectedClinician={selectedClinician}
+            selectedDay={selectedDay}
+            days={days}
+          />
           <AppointmentTable data={appointments} remove={removeAppointment}/>
         </Grid>
       </Grid>

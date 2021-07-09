@@ -5,32 +5,59 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
-import { GroupType } from '../../../shared/types/appointment';
-
 import { useStyles } from './style';
 
 interface Props {
-  groupHandler: (type: string) => void;
-  type: GroupType;
+  clinicianHandler: (name: string) => void;
+  selectedDayHandler: (day: string) => void;
+  clinicians: string[];
+  selectedClinician: string;
+  days: string[];
+  selectedDay: string;
 }
 
-export const DropDown: React.FC<Props> = ({groupHandler, type}) => {
+export const DropDown: React.FC<Props> = ({clinicianHandler, clinicians, selectedClinician, days, selectedDayHandler, selectedDay}) => {
   const classes = useStyles();
 
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    groupHandler(event.target.value as string);
+  const handleClinicianChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    clinicianHandler(event.target.value as string);
+    selectedDayHandler('');
+  };
+  const handleDayChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    selectedDayHandler(event.target.value as string);
+    clinicianHandler('');
   };
   return (
-    <FormControl className={classes.formControl}>
-      <InputLabel id="select-label">Group by</InputLabel>
-      <Select
-        labelId="select-label"
-        id="dropdown"
-        value={type}
-        onChange={handleChange}
-      >
-        <MenuItem value={GroupType.day}>Appointment day</MenuItem>
-        <MenuItem value={GroupType.clinician}>Clinican name</MenuItem>
-      </Select>
-    </FormControl>)
+    <>
+      <FormControl className={classes.formControl}>
+        <InputLabel id="select-clinician">Clinician</InputLabel>
+        <Select
+          labelId="select-clinician"
+          id="dropdown-clinician"
+          value={selectedClinician}
+          onChange={handleClinicianChange}
+        >
+          {
+            clinicians.map((clinicName) => (
+              <MenuItem value={clinicName} key={clinicName}>{clinicName}</MenuItem>
+            ))
+          }
+        </Select>
+      </FormControl>
+      <FormControl className={classes.formControl}>
+        <InputLabel id="select-day">Days</InputLabel>
+        <Select
+          labelId="select-day"
+          id="dropdown-day"
+          value={selectedDay}
+          onChange={handleDayChange}
+        >
+          {
+            days.map((day) => (
+              <MenuItem value={day} key={day}>{day}</MenuItem>
+            ))
+          }
+        </Select>
+      </FormControl>
+    </>)
 }
