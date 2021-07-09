@@ -23,8 +23,3 @@ export interface RawAppointment {
   startDate: Date;
   endDate: Date;
 }
-
-export enum GroupType {
-  clinician= 'CLINICIAN',
-  day = 'DAY'
-}
