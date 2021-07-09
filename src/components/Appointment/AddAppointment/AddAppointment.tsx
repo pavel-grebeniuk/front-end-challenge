@@ -9,7 +9,7 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import add from 'date-fns/add'
 import Box from '@material-ui/core/Box';
-import * as Yup from 'yup';
+import { object, string } from 'yup';
 
 import { Appointment, AppointmentStatus, RawAppointment } from '../../../shared/types/appointment';
 
@@ -17,10 +17,10 @@ interface Props {
   addHandler: (data: Appointment) => void;
 }
 
-const ValidationSchema = Yup.object().shape({
-  clinicianName: Yup.string()
+const ValidationSchema = object().shape({
+  clinicianName: string()
   .required('Required'),
-  patientName: Yup.string()
+  patientName: string()
   .required('Required'),
 });
 
