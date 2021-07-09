@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
 import { Container, Grid } from '@material-ui/core';
-import compareAsc from 'date-fns/compareAsc';
-import { format } from 'date-fns';
+import { format, compareAsc } from 'date-fns';
 
 import { Appointment } from '../../shared/types/appointment';
-import data from '../../../data.json';
 import { DropDown } from './DropDown';
 import { AddAppointment } from './AddAppointment/AddAppointment';
 import { AppointmentTable } from './AppointmentTable';
+
+import data from '../../../data.json';
 
 import { useStyles } from './style';
 
