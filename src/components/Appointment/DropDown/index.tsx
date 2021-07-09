@@ -37,6 +37,7 @@ export const DropDown: React.FC<Props> = ({clinicianHandler, clinicians, selecte
           value={selectedClinician}
           onChange={handleClinicianChange}
         >
+          <MenuItem value={''}><em>NONE</em></MenuItem>
           {
             clinicians.map((clinicName) => (
               <MenuItem value={clinicName} key={clinicName}>{clinicName}</MenuItem>
@@ -52,6 +53,7 @@ export const DropDown: React.FC<Props> = ({clinicianHandler, clinicians, selecte
           value={selectedDay}
           onChange={handleDayChange}
         >
+          <MenuItem value={''}><em>NONE</em></MenuItem>
           {
             days.map((day) => (
               <MenuItem value={day} key={day}>{day}</MenuItem>
