@@ -8,5 +8,8 @@ export const useStyles = makeStyles({
     textAlign: 'center',
     justifyContent: 'center',
     marginTop: 200,
+  },
+  groupTitle: {
+    fontWeight: 'bold',
   }
 });

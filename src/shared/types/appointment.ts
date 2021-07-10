@@ -23,3 +23,9 @@ export interface RawAppointment {
   startDate: Date;
   endDate: Date;
 }
+
+export enum GroupBy {
+  clinicial = 'CLINICIAL',
+  day = 'DAY',
+  none = '',
+}

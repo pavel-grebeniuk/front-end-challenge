@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Appointments } from './Appointment/Appointments';
+import { AppointmentPage } from './AppointmentPage';
 
 export const App: React.FC = () => {
-  return <Appointments/>
+  return <AppointmentPage/>
 }
